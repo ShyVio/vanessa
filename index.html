@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will you be my valentine?</title>
+    <style>
+        @keyframes pulse {
+            0% { text-shadow: 0 0 5px red, 0 0 10px red; }
+            50% { text-shadow: 0 0 15px red, 0 0 30px red; }
+            100% { text-shadow: 0 0 5px red, 0 0 10px red; }
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffb6c1;
+            flex-direction: column;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: red;
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        .buttons {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            position: absolute;
+            transition: left 0.5s ease-in-out, top 0.5s ease-in-out;
+        }
+
+        .yes {
+            background-color: #ff4d79;
+            color: white;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .no {
+            background-color: #666;
+            color: white;
+            left: 50%;
+            top: 60%;
+            transform: translateX(-50%);
+        }
+
+        .funMessage, .devilMessage {
+            font-size: 32px;
+            color: red;
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: fadeInOut 7s forwards;
+        }
+
+        .emoji {
+            font-size: 36px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loveMessage {
+            font-size: 48px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+
+        .heartIcon {
+            font-size: 64px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Will you be my valentine? ❤️</h1>
+    <div class="buttons">
+        <button class="yes" id="yesButton">Yes! ❤️</button>
+        <button class="no">No 😭</button>
+    </div>
+
+    <div id="loveMessageContainer" class="hidden">
+        <span class="loveMessage">I love you forever bby</span>
+        <div class="heartIcon">❤️❤️❤️</div>
+    </div>
+
+    <script>
+        const yesButton = document.getElementById('yesButton');
+        const loveMessageContainer = document.getElementById('loveMessageContainer');
+        let moveAfterClick = false;
+        let moveDuration = 60000; // 1 minute in milliseconds
+        let startTime;
+        let clickCount = 0; // Track the number of clicks
+
+        function moveButton() {
+            if (!moveAfterClick) return;
+            if (performance.now() - startTime > moveDuration) {
+                yesButton.disabled = false; // Re-enable the button when moving stops
+                return; // Stop after 1 minute
+            }
+
+            let buttonWidth = yesButton.offsetWidth;
+            let buttonHeight = yesButton.offsetHeight;
+            let screenWidth = window.innerWidth;
+            let screenHeight = window.innerHeight;
+
+            let maxLeft = screenWidth - buttonWidth - 10;
+            let maxTop = screenHeight - buttonHeight - 10;
+
+            let newLeft = Math.random() * maxLeft;
+            let newTop = Math.random() * maxTop;
+
+            yesButton.style.left = `${newLeft}px`;
+            yesButton.style.top = `${newTop}px`;
+        }
+
+        function startMoving() {
+            yesButton.disabled = true; // Disable the button when moving starts
+            moveButton();
+            setInterval(moveButton, 200);
+        }
+
+        function showFunMessage() {
+            const message = document.createElement("div");
+            message.classList.add("funMessage");
+            message.innerHTML = "Having fun trying to click it?";
+            document.body.appendChild(message);
+
+            // Heart and loving emoji after the message
+            const emojiContainer = document.createElement("span");
+            emojiContainer.classList.add("emoji");
+            emojiContainer.innerHTML = "❤️🥰"; // Heart and loving emoji
+            message.appendChild(emojiContainer);
+
+            // Make the message fade out
+            setTimeout(() => {
+                message.style.opacity = 0;
+            }, 15000);
+        }
+
+        function showDevilMessage() {
+            const devilMessage = document.createElement("div");
+            devilMessage.classList.add("devilMessage");
+            devilMessage.innerHTML = "Well, I told you it would be fun, for ME 😈";
+            document.body.appendChild(devilMessage);
+
+            // Make the devil message fade out
+            setTimeout(() => {
+                devilMessage.style.opacity = 0;
+            }, 15000);
+        }
+
+        yesButton.addEventListener('click', () => {
+            clickCount++;
+
+            if (clickCount === 1) {
+                moveAfterClick = true;
+                startTime = performance.now();
+                startMoving();
+                
+                // Show the fun message after 10 seconds
+                setTimeout(showFunMessage, 10000); // Show message after 10 seconds
+
+                // Show the devil message after 30 seconds
+                setTimeout(showDevilMessage, 30000); // Show devil message after 30 seconds
+            } else if (clickCount === 2) {
+                // Remove title and buttons after the second click
+                document.querySelector("h1").classList.add("hidden");
+                document.querySelector(".buttons").classList.add("hidden");
+
+                // Show "I love you forever bby" with hearts
+                loveMessageContainer.classList.remove("hidden");
+            }
+        });
+    </script>
+</body>
+</html>
